@@ -23,6 +23,7 @@ class EmployeeUpdate(BaseModel):
     last_name: str | None = None
     email: EmailStr | None = None
     phone: str | None = None
+    hire_date: date | None = None
     position: str | None = None
     department_id: uuid.UUID | None = None
     status: str | None = None

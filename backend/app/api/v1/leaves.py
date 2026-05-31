@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.deps import get_current_user
 from app.database import get_db
 from app.models.leave import LeaveRequest
 from app.schemas.leave import LeaveRequestCreate, LeaveRequestRead, LeaveRequestUpdate
@@ -18,6 +19,7 @@ async def list_leave_requests(
     employee_id: uuid.UUID | None = Query(None),
     status: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     query = select(LeaveRequest)
 
@@ -31,7 +33,11 @@ async def list_leave_requests(
 
 
 @router.get("/{leave_id}", response_model=LeaveRequestRead)
-async def get_leave_request(leave_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+async def get_leave_request(
+    leave_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
     result = await db.execute(select(LeaveRequest).where(LeaveRequest.id == leave_id))
     leave = result.scalar_one_or_none()
     if not leave:
@@ -40,7 +46,11 @@ async def get_leave_request(leave_id: uuid.UUID, db: AsyncSession = Depends(get_
 
 
 @router.post("/", response_model=LeaveRequestRead, status_code=201)
-async def create_leave_request(payload: LeaveRequestCreate, db: AsyncSession = Depends(get_db)):
+async def create_leave_request(
+    payload: LeaveRequestCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
     leave = LeaveRequest(**payload.model_dump())
     db.add(leave)
     await db.commit()
@@ -50,7 +60,10 @@ async def create_leave_request(payload: LeaveRequestCreate, db: AsyncSession = D
 
 @router.patch("/{leave_id}", response_model=LeaveRequestRead)
 async def update_leave_request(
-    leave_id: uuid.UUID, payload: LeaveRequestUpdate, db: AsyncSession = Depends(get_db)
+    leave_id: uuid.UUID,
+    payload: LeaveRequestUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     result = await db.execute(select(LeaveRequest).where(LeaveRequest.id == leave_id))
     leave = result.scalar_one_or_none()
@@ -66,7 +79,11 @@ async def update_leave_request(
 
 
 @router.delete("/{leave_id}", status_code=204)
-async def delete_leave_request(leave_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+async def delete_leave_request(
+    leave_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
     result = await db.execute(select(LeaveRequest).where(LeaveRequest.id == leave_id))
     leave = result.scalar_one_or_none()
     if not leave:
