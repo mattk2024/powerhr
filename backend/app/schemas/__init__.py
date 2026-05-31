@@ -1,5 +1,5 @@
 from app.schemas.attendance import AttendanceCreate, AttendanceRead
-from app.schemas.auth import LoginRequest, Token
+from app.schemas.auth import LoginRequest, RegisterRequest, Token
 from app.schemas.department import DepartmentCreate, DepartmentRead, DepartmentUpdate
 from app.schemas.employee import EmployeeCreate, EmployeeRead, EmployeeUpdate
 from app.schemas.leave import LeaveRequestCreate, LeaveRequestRead, LeaveRequestUpdate
@@ -17,5 +17,6 @@ __all__ = [
     "LeaveRequestRead",
     "LeaveRequestUpdate",
     "LoginRequest",
+    "RegisterRequest",
     "Token",
 ]
