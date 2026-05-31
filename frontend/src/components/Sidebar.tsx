@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const linkStyle = {
   display: "block",
@@ -16,6 +17,14 @@ const activeStyle = {
 };
 
 export default function Sidebar() {
+  const { email, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
+
   return (
     <nav
       style={{
@@ -62,6 +71,35 @@ export default function Sidebar() {
       >
         Leave Management
       </NavLink>
+
+      <div style={{ marginTop: "auto" }}>
+        <div
+          style={{
+            padding: "0.75rem 1.5rem",
+            fontSize: "0.8rem",
+            color: "#888",
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          {email}
+        </div>
+        <button
+          onClick={handleLogout}
+          style={{
+            display: "block",
+            width: "100%",
+            padding: "0.6rem 1.5rem",
+            background: "none",
+            border: "none",
+            color: "#ccc",
+            fontSize: "0.9rem",
+            cursor: "pointer",
+            textAlign: "left",
+          }}
+        >
+          Log out
+        </button>
+      </div>
     </nav>
   );
 }
